@@ -68,17 +68,15 @@ Na pasta `CRUD-EFCore/` copie o arquivo de exemplo e renomeie para `appsettings.
 copy appsettings.json.example appsettings.json
 ```
 
-Abra o `appsettings.json` e coloque a senha correta do seu MySQL:
+Abra o `appsettings.json` e coloque a senha e usuario correto do seu MySQL:
 
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "server=localhost;database=HelpDeskDb;user=root;password=SUA_SENHA_AQUI;"
+    "DefaultConnection": "server=localhost;database=HelpDeskDb;user=USUARIO;password=SUA_SENHA_AQUI;"
   }
 }
 ```
-
-> O arquivo `appsettings.json` está no `.gitignore`, portanto suas credenciais não serão commitadas.
 
 ### 3. Restaurar, compilar e atualizar o banco de dados
 
