@@ -27,7 +27,7 @@ Sistema de Help Desk desenvolvido em C# com Entity Framework Core, MySQL e opera
 | 10 | Cadastrar equipamento |
 | 11 | Listar equipamentos |
 | 12 | Atualizar status do equipamento |
-| 13 | Remver equipamento |
+| 13 | Remover equipamento |
 | 0 | Sair |
 
 ### CRUD de Equipamentos
@@ -51,13 +51,24 @@ Para instalar o `dotnet-ef` caso não tenha:
 dotnet tool install --global dotnet-ef --version 9.0.0
 ```
 
-## Configuração segura das credenciais
+## Como executar o projeto
 
-**NUNCA** commite sua senha real no repositório. Utilize uma das formas abaixo para proteger suas credenciais:
+### 1. Clone o repositório
 
-### Opção 1: Arquivo appsettings.json (Recomendado)
+```bash
+git clone https://github.com/guta231/CRUD-EFCore.git
+cd CRUD-EFCore
+```
 
-1. Crie um arquivo `appsettings.json` na pasta `CRUD-EFCore/` (raiz do projeto console):
+### 2. Configurar a string de conexão
+
+Na pasta `CRUD-EFCore/` copie o arquivo de exemplo e renomeie para `appsettings.json`:
+
+```bash
+copy appsettings.json.example appsettings.json
+```
+
+Abra o `appsettings.json` e coloque a senha correta do seu MySQL:
 
 ```json
 {
@@ -67,114 +78,24 @@ dotnet tool install --global dotnet-ef --version 9.0.0
 }
 ```
 
-2. Adicione o pacote necessário ao `.csproj`:
+> O arquivo `appsettings.json` está no `.gitignore`, portanto suas credenciais não serão commitadas.
 
-```xml
-<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
-```
-
-3. Atualize o `HelpDeskContext.cs` para ler a string de conexão:
-
-```csharp
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-
-namespace CRUD_EFCore
-{
-    public class HelpDeskContext : DbContext
-    {
-        public DbSet<Cliente> Clientes { get; set; }
-        public DbSet<Tecnico> Tecnicos { get; set; }
-        public DbSet<Chamado> Chamados { get; set; }
-        public DbSet<Equipamento> Equipamentos { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                IConfiguration configuration = new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                    .Build();
-
-                string? connectionString = configuration.GetConnectionString("DefaultConnection");
-
-                if (string.IsNullOrEmpty(connectionString))
-                {
-                    throw new Exception("String de conexão não encontrada. Configure o arquivo appsettings.json.");
-                }
-
-                optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-            }
-        }
-    }
-}
-```
-
-4. Adicione `appsettings.json` ao `.gitignore` para garantir que não seja commitado:
-
-```gitignore
-appsettings.json
-appsettings.*.json
-```
-
-### Opção 2: Variáveis de ambiente
-
-Configure a variável de ambiente `HELPDESK_CONNECTION` com sua string de conexão:
-
-**Windows (PowerShell):**
-
-```powershell
-$env:HELPDESK_CONNECTION = "server=localhost;database=HelpDeskDb;user=root;password=SUA_SENHA_AQUI;"
-```
-
-**Linux/macOS:**
-
-```bash
-export HELPDESK_CONNECTION="server=localhost;database=HelpDeskDb;user=root;password=SUA_SENHA_AQUI;"
-```
-
-### Opção 3: User Secrets (Desenvolvimento local)
-
-```bash
-dotnet user-secrets init
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "server=localhost;database=HelpDeskDb;user=root;password=SUA_SENHA_AQUI;"
-```
-
-## Como executar o projeto
-
-### 1. Clone o repositório
-
-```bash
-git clone https://github.com/SEU_USUARIO/CRUD-EFCore.git
-cd CRUD-EFCore
-```
-
-### 2. Configure as credenciais
-
-Siga uma das opções de configuração segura acima.
-
-### 3. Restaurar e compilar
+### 3. Restaurar, compilar e atualizar o banco de dados
 
 ```bash
 cd CRUD-EFCore
 dotnet restore
 dotnet build
-```
-
-### 4. Criar e atualizar o banco de dados
-
-```bash
 dotnet ef database update
 ```
 
-As migrations `AddEquipamento` e `AddLocalizacaoEquipamento` já estão presentes na pasta `Migrations/`.
-
-### 5. Executar a aplicação
+### 4. Executar a aplicação
 
 ```bash
 dotnet run
 ```
+
+Ou abra o arquivo `CRUD-EFCore.slnx` no Visual Studio e pressione `F5`.
 
 ## Verificação no MySQL
 
@@ -192,6 +113,7 @@ DESCRIBE Equipamentos;
 CRUD-EFCore/
 ├── CRUD-EFCore/
 │   ├── Migrations/           # Migrations do Entity Framework Core
+│   ├── appsettings.json.example
 │   ├── Cliente.cs
 │   ├── Tecnico.cs
 │   ├── Chamado.cs
