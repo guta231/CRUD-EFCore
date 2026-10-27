@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "server=localhost;database=HelpDeskDb;user=root;password=SUA_SENHA_AQUI;"
+  }
+}

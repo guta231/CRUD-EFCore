@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace CRUD_EFCore
 {
@@ -13,7 +14,23 @@ namespace CRUD_EFCore
         {
             if (!optionsBuilder.IsConfigured)
             {
-                string connectionString = "server=localhost;database=HelpDeskDb;user=root;password=@Guta231;";
+                IConfiguration configuration = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                    .Build();
+
+                string? connectionString = configuration.GetConnectionString("DefaultConnection");
+
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    connectionString = Environment.GetEnvironmentVariable("HELPDESK_CONNECTION");
+                }
+
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    throw new Exception("String de conexão não encontrada. Configure o arquivo appsettings.json ou a variável de ambiente HELPDESK_CONNECTION.");
+                }
+
                 optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
             }
         }
